@@ -3,7 +3,7 @@ import EntryCard from "./EntryCard";
 import { Inbox, Loader2 } from "lucide-react";
 
 export default function EntryList() {
-  const { entries, isLoading } = useEntries();
+  const { data: entries, isLoading } = useEntries();
 
   if (isLoading) {
     return (
