@@ -1,61 +1,43 @@
-// MEMEX-Reel Capture Input Component
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { capture } from "@/lib/capture";
+import { Send } from "lucide-react";
+import { useRef } from "react";
+import { toast } from "sonner";
 
-import { useRef, useEffect } from 'react';
-
-interface CaptureInputProps {
-  onCapture: (text: string) => void;
-  disabled?: boolean;
-}
-
-export function CaptureInput({ onCapture, disabled = false }: CaptureInputProps) {
+export default function CaptureInput() {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    // Auto-focus on mount
-    const timer = setTimeout(() => {
-      inputRef.current?.focus();
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const text = inputRef.current?.value.trim();
-    if (!text) return;
-    
-    onCapture(text);
-    
-    // Clear and refocus
-    if (inputRef.current) {
-      inputRef.current.value = '';
-      inputRef.current.focus();
+    const value = inputRef.current?.value;
+    if (!value) return;
+
+    try {
+      await capture(value);
+      toast.success("Note ajoutée !");
+      if (inputRef.current) {
+        inputRef.current.value = "";
+      }
+    } catch (error) {
+      toast.error("Erreur lors de l'ajout de la note");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full">
-      <input
+    <form className="relative" onSubmit={handleSubmit}>
+      <Input
         ref={inputRef}
-        type="text"
-        placeholder="Capture rapide..."
-        disabled={disabled}
-        autoComplete="off"
-        autoFocus
-        className="
-          w-full px-5 py-4
-          text-lg
-          bg-card text-card-foreground
-          placeholder:text-muted-foreground
-          border-2 border-border
-          rounded-xl
-          shadow-card
-          transition-all duration-200
-          focus:outline-none focus:border-primary focus:shadow-elevated
-          disabled:opacity-50 disabled:cursor-not-allowed
-        "
+        placeholder="Capturez une idée..."
+        className="w-full rounded-full px-6 py-6 text-lg"
       />
+      <Button
+        type="submit"
+        size="icon"
+        className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full"
+      >
+        <Send size={20} />
+      </Button>
     </form>
   );
 }
