@@ -1,12 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { capture } from "@/lib/capture";
+import { captureEntry } from "@/lib/capture";
+import { useQueryClient } from "@tanstack/react-query";
 import { Send } from "lucide-react";
 import { useRef } from "react";
 import { toast } from "sonner";
 
 export default function CaptureInput() {
   const inputRef = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -14,12 +16,13 @@ export default function CaptureInput() {
     if (!value) return;
 
     try {
-      await capture(value);
+      await captureEntry(value);
+      await queryClient.invalidateQueries({ queryKey: ["entries"] });
       toast.success("Note ajoutée !");
       if (inputRef.current) {
         inputRef.current.value = "";
       }
-    } catch (error) {
+    } catch {
       toast.error("Erreur lors de l'ajout de la note");
     }
   };
