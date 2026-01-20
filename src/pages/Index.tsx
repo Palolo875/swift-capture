@@ -97,12 +97,12 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background safe-top safe-bottom safe-x">
+    <div className="min-h-screen bg-warm-pattern safe-top safe-bottom safe-x">
       <div className="max-w-lg mx-auto px-4 pb-8">
         <AppHeader entryCount={entries.length} />
         
         {/* Capture input - sticky */}
-        <div className="sticky top-0 z-10 pt-2 pb-4 bg-background">
+        <div className="sticky top-0 z-10 pt-2 pb-4 bg-background/70 backdrop-blur">
           <CaptureInput 
             onCapture={handleCapture} 
             disabled={isCapturing}
